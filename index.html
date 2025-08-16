@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lots of love for G</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.5);
+        }
+
+        .title {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .setup-form {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            animation: slideIn 0.8s ease-out 0.4s both;
+        }
+
+        .setup-form input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .setup-form input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .setup-screen {
+            display: block;
+        }
+
+        .setup-screen.hidden {
+            display: none;
+        }
+
+        .main-app {
+            display: none;
+        }
+
+        .main-app.active {
+            display: block;
+        }
+
+        .message-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            animation: slideIn 0.8s ease-out 0.4s both;
+        }
+
+        .message-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .message-container:hover::before {
+            left: 100%;
+        }
+
+        .message {
+            font-size: 1.3rem;
+            color: #333;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .loading {
+            display: none;
+            color: #666;
+            font-style: italic;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a6f);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+            background: linear-gradient(45deg, #ff5252, #e91e63);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .heart {
+            color: #ff6b6b;
+            font-size: 1.5rem;
+            margin: 0 10px;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        .status {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 20px;
+            animation: fadeIn 1s ease-out 0.8s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        @keyframes typing {
+            0%, 50%, 100% {
+                opacity: 1;
+            }
+            25%, 75% {
+                opacity: 0.5;
+            }
+        }
+
+        .typing-animation {
+            animation: typing 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Setup Screen -->
+        <div class="setup-screen" id="setupScreen">
+            <h1 class="title">💝 Hey G something small for you to feel better :)</h1>
+            <p class="subtitle">Love, just for you</p>
+            
+            <div class="setup-form">
+                <input type="password" id="apiKeyInput" placeholder="Enter your Hugging Face API key" />
+                <button class="btn" onclick="startApp()">Start</button>
+            </div>
+        </div>
+        
+        <!-- Main App -->
+        <div class="main-app" id="mainApp">
+            <h1 class="title">💝 Hey G something small for you to feel better :)</h1>
+            <p class="subtitle">Love, just for you</p>
+            
+            <div class="message-container">
+                <div class="loading active typing-animation" id="loading">
+                    Generating your personalized message with AI...
+                </div>
+                <div class="message" id="message" style="display: none;"></div>
+            </div>
+            
+            <button class="refresh-btn" onclick="generateNewMessage()" id="refreshBtn">
+                <span class="heart">♥</span>
+                Generate New Message
+                <span class="heart">♥</span>
+            </button>
+            
+            <div class="status" id="status">
+                Powered by your boyfriend ✨ | Visit count: <span id="visitCount">1</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let visitCount = parseInt(localStorage.getItem('visitCount') || '1');
+        let API_KEY = localStorage.getItem('hf_api_key') || null;
+        let setupCompleted = localStorage.getItem('setup_completed') === 'true';
+
+        // Free Hugging Face API endpoint
+        const API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium";
+
+        function initializeApp() {
+            if (setupCompleted) {
+                showMainApp();
+                setTimeout(generateNewMessage, 500);
+            } else {
+                showSetup();
+            }
+            document.getElementById('visitCount').textContent = visitCount;
+        }
+
+        function showSetup() {
+            document.getElementById('setupScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.remove('active');
+        }
+
+        function showMainApp() {
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('active');
+        }
+
+        function startApp() {
+            const keyInput = document.getElementById('apiKeyInput');
+            const key = keyInput.value.trim();
+            
+            if (key) {
+                API_KEY = key;
+                localStorage.setItem('hf_api_key', API_KEY);
+            }
+            
+            localStorage.setItem('setup_completed', 'true');
+            setupCompleted = true;
+            showMainApp();
+            setTimeout(generateNewMessage, 500);
+        }
+
+        // Allow Enter key to start app
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !setupCompleted) {
+                startApp();
+            }
+        });
+
+        async function queryHuggingFace(prompt) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        inputs: prompt,
+                        parameters: {
+                            max_new_tokens: 100,
+                            temperature: 0.7,
+                            do_sample: true,
+                        }
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Error calling Hugging Face API:', error);
+                throw error;
+            }
+        }
+
+        // Fallback messages in case API fails
+        const fallbackMessages = [
+            "error: API not available, but you're still amazing! 💕",
+        ];
+
+        async function generateAffectionateMessage() {
+            const prompts = [
+                "Write a short, heartfelt and affectionate message to brighten someone's day:",
+                "Create a loving and encouraging message for someone who needs to feel appreciated:",
+                "Generate a warm, caring message that shows someone they are valued:",
+                "Write an uplifting and affectionate note to make someone smile:",
+                "Craft a sweet and supportive message to remind someone they are loved:",
+                "Compose a tender and affectionate message to lift someone's spirits:",
+            ];
+            
+            const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+            
+            try {
+                if (API_KEY && API_KEY.length > 10) {
+                    const result = await queryHuggingFace(randomPrompt);
+                    if (result && result[0] && result[0].generated_text) {
+                        return result[0].generated_text.replace(randomPrompt, '').trim();
+                    }
+                }
+                
+                throw new Error("Using fallback");
+                
+            } catch (error) {
+                return fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
+            }
+        }
+
+        function displayMessage(text) {
+            const messageEl = document.getElementById('message');
+            messageEl.innerHTML = '';
+            messageEl.style.display = 'block';
+            
+            let index = 0;
+            const typingSpeed = 30;
+            
+            function typeCharacter() {
+                if (index < text.length) {
+                    messageEl.innerHTML += text.charAt(index);
+                    index++;
+                    setTimeout(typeCharacter, typingSpeed);
+                }
+            }
+            
+            typeCharacter();
+        }
+
+        async function generateNewMessage() {
+            const loadingEl = document.getElementById('loading');
+            const messageEl = document.getElementById('message');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const visitCountEl = document.getElementById('visitCount');
+            
+            loadingEl.classList.add('active');
+            messageEl.style.display = 'none';
+            refreshBtn.disabled = true;
+            
+            try {
+                const message = await generateAffectionateMessage();
+                
+                loadingEl.classList.remove('active');
+                displayMessage(message);
+                
+                visitCount++;
+                visitCountEl.textContent = visitCount;
+                localStorage.setItem('visitCount', visitCount.toString());
+                
+            } catch (error) {
+                loadingEl.classList.remove('active');
+                messageEl.style.display = 'block';
+                messageEl.innerHTML = "Something went wrong, but you're still amazing! 💕";
+                console.error('Error generating message:', error);
+            } finally {
+                refreshBtn.disabled = false;
+            }
+        }
+
+        window.addEventListener('load', () => {
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
