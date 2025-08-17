@@ -305,7 +305,8 @@
         let setupCompleted = localStorage.getItem('setup_completed') === 'true';
 
         // Free Hugging Face API endpoint
-        const API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium";
+        //const API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium";
+        const API_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium");
 
         function initializeApp() {
             if (setupCompleted) {
