@@ -270,7 +270,7 @@
             <p class="subtitle">Love, just for you</p>
             
             <div class="setup-form">
-                <input type="password" id="apiKeyInput" placeholder="Enter your Hugging Face API key" />
+                <input type="password" id="apiKeyInput" placeholder="Enter your Google Gemini API key" />
                 <button class="btn" onclick="startApp()">Start</button>
             </div>
         </div>
@@ -301,12 +301,11 @@
 
     <script>
         let visitCount = parseInt(localStorage.getItem('visitCount') || '1');
-        let API_KEY = localStorage.getItem('hf_api_key') || null;
+        let API_KEY = localStorage.getItem('gemini_api_key') || null;
         let setupCompleted = localStorage.getItem('setup_completed') === 'true';
 
-        // Free Hugging Face API endpoint
-        //const API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium";
-        const API_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium");
+        // Google Gemini API endpoint
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
 
         function initializeApp() {
             if (setupCompleted) {
@@ -334,7 +333,7 @@
             
             if (key) {
                 API_KEY = key;
-                localStorage.setItem('hf_api_key', API_KEY);
+                localStorage.setItem('gemini_api_key', API_KEY);
             }
             
             localStorage.setItem('setup_completed', 'true');
@@ -350,20 +349,22 @@
             }
         });
 
-        async function queryHuggingFace(prompt) {
+        async function queryGemini(prompt) {
             try {
-                const response = await fetch(API_URL, {
+                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        inputs: prompt,
-                        parameters: {
-                            max_new_tokens: 100,
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }],
+                        generationConfig: {
                             temperature: 0.7,
-                            do_sample: true,
+                            maxOutputTokens: 100,
                         }
                     }),
                 });
@@ -373,9 +374,15 @@
                 }
 
                 const result = await response.json();
-                return result;
+                
+                if (result.candidates && result.candidates[0] && result.candidates[0].content) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    throw new Error("No content in response");
+                }
+                
             } catch (error) {
-                console.error('Error calling Hugging Face API:', error);
+                console.error('Error calling Gemini API:', error);
                 throw error;
             }
         }
@@ -399,9 +406,9 @@
             
             try {
                 if (API_KEY && API_KEY.length > 10) {
-                    const result = await queryHuggingFace(randomPrompt);
-                    if (result && result[0] && result[0].generated_text) {
-                        return result[0].generated_text.replace(randomPrompt, '').trim();
+                    const result = await queryGemini(randomPrompt);
+                    if (result) {
+                        return result.trim();
                     }
                 }
                 
