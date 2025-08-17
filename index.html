@@ -305,7 +305,8 @@
         let setupCompleted = localStorage.getItem('setup_completed') === 'true';
 
         // Google Gemini API endpoint
-        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+        //const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
         function initializeApp() {
             if (setupCompleted) {
