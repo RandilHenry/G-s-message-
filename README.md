@@ -13,9 +13,8 @@ A simple web-based interface that allows users to generate AI-powered messages u
 ## Usage
 
 1. Enter your Gemini API key in the input field
-2. Type your prompt or message request
-3. Click generate to create AI-powered content
-4. View the Gemini-generated response instantly
+2. Click generate to create AI-powered content
+3. View the Gemini-generated response instantly
 
 ## Technologies
 
